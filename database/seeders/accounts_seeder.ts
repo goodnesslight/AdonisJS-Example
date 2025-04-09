@@ -2,7 +2,7 @@ import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import { faker } from '@faker-js/faker'
 import cliProgress from 'cli-progress'
 import db from '@adonisjs/lucid/services/db'
-import Account from '../../app/models/account.js'
+import Account from '#models/account'
 
 export default class extends BaseSeeder {
   private readonly amount = 100
