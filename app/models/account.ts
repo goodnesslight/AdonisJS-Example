@@ -11,7 +11,7 @@ export default class Account extends BaseModel {
   declare transactions: HasMany<typeof Transaction>
 
   @column()
-  declare name: number
+  declare name: string
 
   @column()
   declare balance: number // decimal
