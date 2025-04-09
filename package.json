@@ -52,6 +52,7 @@
     "@adonisjs/core": "^6.17.2",
     "@adonisjs/lucid": "^21.6.1",
     "@adonisjs/redis": "^9.2.0",
+    "luxon": "^3.6.1",
     "reflect-metadata": "^0.2.2"
   },
   "hotHook": {
