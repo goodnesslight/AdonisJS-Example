@@ -1,5 +1,5 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
-import { TransactionType } from '../../app/common/enums/transaction_type.js'
+import { TransactionType } from '@app/common/enums/transaction_type.js'
 
 export default class extends BaseSchema {
   protected tableName = 'transactions'
