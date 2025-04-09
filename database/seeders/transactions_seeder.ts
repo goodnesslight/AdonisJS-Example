@@ -1,10 +1,10 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import { faker } from '@faker-js/faker'
 import cliProgress from 'cli-progress'
-import { TransactionType } from '@app/common/enums/transaction_type.js'
-import Transaction from '@app/models/transaction.js'
 import db from '@adonisjs/lucid/services/db'
-import Account from '@app/models/account.js'
+import { TransactionType } from '../../app/common/enums/transaction_type.js'
+import Account from '../../app/models/account.js'
+import Transaction from '../../app/models/transaction.js'
 
 export default class TransactionSeeder extends BaseSeeder {
   private readonly amount = 10_000
