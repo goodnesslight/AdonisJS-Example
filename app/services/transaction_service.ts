@@ -60,7 +60,7 @@ export class TransactionService {
       })
     )
     transaction.price = price
-    await transaction.save()
+    await this.repository.update({ id: transaction.id }, transaction)
     await this.recalculate(transaction.accountId, transaction.id)
 
     const lastTransaction: Transaction | null = await this.repository.getLast(transaction.accountId)
@@ -74,6 +74,8 @@ export class TransactionService {
   }
 
   private async recalculate(accountId: number, startId: number): Promise<void> {
+    console.log('gogog')
+
     const bar: cliProgress.SingleBar = new cliProgress.SingleBar(
       {
         clearOnComplete: false,
@@ -109,7 +111,7 @@ export class TransactionService {
       )
       transaction.balanceAfter = newTransactionBalance
       previousTransactionBalance = newTransactionBalance
-      await transaction.save()
+      await this.repository.update({ id: transaction.id }, transaction)
       bar.increment()
     }
 
