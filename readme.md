@@ -1,6 +1,6 @@
 # ⏱️ Transaction Simulator
 
-Demo application
+Simple demo application
 
 ---
 
