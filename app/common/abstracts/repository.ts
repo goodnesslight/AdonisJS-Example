@@ -8,7 +8,14 @@ export abstract class AbstractRepository<M extends typeof BaseModel> {
     searchPayload: Partial<ModelAttributes<InstanceType<M>>>,
     updatePayload: Partial<ModelAttributes<InstanceType<M>>>
   ): Promise<void> {
-    await this.model.updateOrCreate(searchPayload, updatePayload)
+    const instance: InstanceType<M> | null = await this.model.findBy(searchPayload)
+
+    if (!instance) {
+      throw new Error('Model was not found!')
+    }
+
+    instance.merge(updatePayload)
+    await instance.save()
   }
 
   async findOne(id: number): Promise<InstanceType<M> | null> {
