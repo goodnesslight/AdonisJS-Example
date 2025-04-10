@@ -9,7 +9,7 @@ import Transaction from '#models/transaction'
 export default class TransactionSeeder extends BaseSeeder {
   private readonly amount = 10_000
 
-  private readonly minPrice = 1_000
+  private readonly minPrice = 100
   private readonly maxPrice = 1_000
 
   private readonly chunkSize = 1_000
@@ -19,8 +19,12 @@ export default class TransactionSeeder extends BaseSeeder {
 
     try {
       const transactions: Partial<Transaction>[] = []
-      const accounts: Account[] = await Account.all({ client: trx })
-      const accountBalances: Record<number, number> = {}
+      const account: Account | null = await Account.first({ client: trx })
+
+      if (!account) {
+        throw new Error('First account was not found!')
+      }
+
       const multibar = new cliProgress.MultiBar(
         {
           clearOnComplete: false,
@@ -29,37 +33,25 @@ export default class TransactionSeeder extends BaseSeeder {
         },
         cliProgress.Presets.shades_classic
       )
-      const accountBalancesBuildingBar = multibar.create(accounts.length, 0, {
-        label: 'Building account balances',
-      })
-
-      for (const account of accounts) {
-        account.useTransaction(trx)
-        accountBalances[account.id] = account.balance
-        accountBalancesBuildingBar.increment()
-      }
-
       const transactionsBuildingBar = multibar.create(this.amount, 0, {
         label: 'Building transactions',
       })
 
       for (let i = 0; i < this.amount; i++) {
-        const account = faker.helpers.arrayElement(accounts)
         const accountId = account.id
-
         const type = faker.helpers.arrayElement(Object.values(TransactionType))
-        const price = Number(faker.finance.amount({ min: this.minPrice, max: this.maxPrice }))
+        const price = Number.parseFloat(
+          faker.finance.amount({ min: this.minPrice, max: this.maxPrice })
+        )
 
-        accountBalances[accountId] =
-          type === TransactionType.Income
-            ? accountBalances[accountId] + price
-            : accountBalances[accountId] - price
+        account.balance =
+          type === TransactionType.Income ? account.balance + price : account.balance - price
 
         transactions.push({
           accountId,
           type,
           price,
-          balanceAfter: accountBalances[accountId],
+          balanceAfter: account.balance,
         })
 
         transactionsBuildingBar.increment()
@@ -74,17 +66,8 @@ export default class TransactionSeeder extends BaseSeeder {
         creatingTransactionsBar.increment()
       }
 
-      const updatingAccountBalancesBar = multibar.create(accounts.length, 0, {
-        label: 'Updating account balances',
-      })
-
-      for (const account of accounts) {
-        account.balance = accountBalances[account.id]
-        await account.save()
-        updatingAccountBalancesBar.increment()
-      }
-
       multibar.stop()
+      await account.save()
       await trx.commit()
     } catch (error) {
       await trx.rollback()
