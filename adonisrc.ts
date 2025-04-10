@@ -29,7 +29,13 @@ export default defineConfig({
       environment: ['repl', 'test'],
     },
     () => import('@adonisjs/redis/redis_provider'),
-    () => import('@adonisjs/lucid/database_provider')
+    () => import('@adonisjs/lucid/database_provider'),
+
+    () => import('./providers/account_repository_provider.js'),
+    () => import('./providers/account_service_provider.js'),
+
+    () => import('./providers/transaction_repository_provider.js'),
+    () => import('./providers/transaction_service_provider.js'),
   ],
 
   /*
