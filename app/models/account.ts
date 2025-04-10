@@ -13,7 +13,7 @@ export default class Account extends BaseModel {
   @column()
   declare name: string
 
-  @column()
+  @column({ consume: (value: string) => Number.parseFloat(value) })
   declare balance: number // decimal
 
   @column.dateTime({ autoCreate: true })

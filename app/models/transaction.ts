@@ -16,10 +16,10 @@ export default class Transaction extends BaseModel {
   @column()
   declare type: TransactionType
 
-  @column()
+  @column({ consume: (value: string) => Number.parseFloat(value) })
   declare price: number // decimal
 
-  @column()
+  @column({ consume: (value: string) => Number.parseFloat(value) })
   declare balanceAfter: number // decimal
 
   @column.dateTime({ autoCreate: true })
