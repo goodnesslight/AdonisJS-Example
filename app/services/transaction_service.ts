@@ -6,6 +6,7 @@ import { faker } from '@faker-js/faker'
 import redis from '@adonisjs/redis/services/main'
 import { TransactionType } from '#common/enums/transaction_type'
 import { AccountService } from '#services/account_service'
+import cliProgress from 'cli-progress'
 
 @inject()
 export class TransactionService {
@@ -14,19 +15,19 @@ export class TransactionService {
     private readonly repository: TransactionRepository
   ) {}
 
-  private readonly simulatingDelay: number = 10_000 // 10 sec
+  private readonly simulatingDelay: number = 60_000 // 1 min
 
   private readonly simulatingMinPrice: number = 100
   private readonly simulatingMaxPrice: number = 100
 
   private isSimulating: boolean = false
 
-  simulate(): void {
+  async simulate(): Promise<void> {
     if (this.isSimulating) {
       return
     }
 
-    setInterval(async () => {
+    const run = async (): Promise<void> => {
       const transaction: Transaction | null = await this.repository.getRandom()
 
       if (!transaction) {
@@ -37,9 +38,11 @@ export class TransactionService {
         faker.finance.amount({ min: this.simulatingMinPrice, max: this.simulatingMaxPrice })
       )
       await this.update(transaction.id, price)
-    }, this.simulatingDelay)
+    }
 
     this.isSimulating = true
+    await run()
+    setInterval(run, this.simulatingDelay)
   }
 
   async update(id: number, price: number): Promise<void> {
@@ -71,6 +74,14 @@ export class TransactionService {
   }
 
   private async recalculate(accountId: number, startId: number): Promise<void> {
+    const bar: cliProgress.SingleBar = new cliProgress.SingleBar(
+      {
+        clearOnComplete: false,
+        hideCursor: true,
+        format: '[{bar}] {percentage}% | {value}/{total} | Recalculating transactions',
+      },
+      cliProgress.Presets.shades_classic
+    )
     const transactions: Transaction[] = await this.repository.getNext(accountId, startId)
     const previousTransaction: Transaction | null = await this.repository.getPrevious(
       accountId,
@@ -81,6 +92,8 @@ export class TransactionService {
     if (previousTransaction) {
       previousTransactionBalance = previousTransaction.balanceAfter
     }
+
+    bar.start(transactions.length, 0)
 
     for (const transaction of transactions) {
       const signedTransactionAmount: number =
@@ -97,7 +110,10 @@ export class TransactionService {
       transaction.balanceAfter = newTransactionBalance
       previousTransactionBalance = newTransactionBalance
       await transaction.save()
+      bar.increment()
     }
+
+    bar.stop()
   }
 
   private formatBackupRedisKey(id: number): string {
