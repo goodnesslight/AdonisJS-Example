@@ -20,7 +20,7 @@ git clone https://github.com/goodnesslight/Transaction-Simulator.git
 cd Transaction-Simulator
 cp .env.example .env
 npm install
-node ace migration:run
+npm run db
 ```
 
 ---
