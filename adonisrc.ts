@@ -36,6 +36,8 @@ export default defineConfig({
 
     () => import('./providers/transaction_repository_provider.js'),
     () => import('./providers/transaction_service_provider.js'),
+
+    () => import('./providers/app_provider.js'),
   ],
 
   /*
