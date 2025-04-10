@@ -1,6 +1,6 @@
 import { inject } from '@adonisjs/core'
-import { AccountRepository } from '../repositories/account_repository.js'
-import Account from '../models/account.js'
+import { AccountRepository } from '#repositories/account_repository'
+import Account from '#models/account'
 
 @inject()
 export class AccountService {

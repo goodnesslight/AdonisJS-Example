@@ -1,11 +1,11 @@
 import { Exception } from '@adonisjs/core/exceptions'
-import Transaction from '../models/transaction.js'
-import TransactionRepository from '../repositories/transaction_repository.js'
+import Transaction from '#models/transaction'
+import TransactionRepository from '#repositories/transaction_repository'
 import { inject } from '@adonisjs/core/container'
-import { faker, tr } from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 import redis from '@adonisjs/redis/services/main'
-import { TransactionType } from '../common/enums/transaction_type.js'
-import { AccountService } from './account_service.js'
+import { TransactionType } from '#common/enums/transaction_type'
+import { AccountService } from '#services/account_service'
 
 @inject()
 export class TransactionService {
