@@ -1,4 +1,4 @@
-# 🚀 Transaction Simulator
+# ⏱️ Transaction Simulator
 
 Demo application
 
