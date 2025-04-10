@@ -4,14 +4,14 @@ import { ApplicationService } from '@adonisjs/core/types'
 export default class TransactionServiceProvider {
   constructor(protected app: ApplicationService) {}
 
-  public register() {
+  public register(): void {
     this.app.container.singleton('app/services/transaction', () => {
       return this.app.container.make(TransactionService)
     })
   }
 
-  public async ready() {
+  public async ready(): Promise<void> {
     const service: TransactionService = await this.app.container.make('app/services/transaction')
-    service.simulate()
+    await service.simulate()
   }
 }

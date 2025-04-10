@@ -4,7 +4,7 @@ import TransactionRepository from '#repositories/transaction_repository'
 export default class TransactionRepositoryProvider {
   constructor(protected app: ApplicationService) {}
 
-  public register() {
+  public register(): void {
     this.app.container.singleton('app/repositories/transaction', () => {
       return this.app.container.make(TransactionRepository)
     })
