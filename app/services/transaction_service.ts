@@ -74,8 +74,6 @@ export class TransactionService {
   }
 
   private async recalculate(accountId: number, startId: number): Promise<void> {
-    console.log('gogog')
-
     const bar: cliProgress.SingleBar = new cliProgress.SingleBar(
       {
         clearOnComplete: false,
