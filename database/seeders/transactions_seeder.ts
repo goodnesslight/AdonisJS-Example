@@ -5,17 +5,18 @@ import db from '@adonisjs/lucid/services/db'
 import { TransactionType } from '#common/enums/transaction_type'
 import Account from '#models/account'
 import Transaction from '#models/transaction'
+import { TransactionClientContract } from '@adonisjs/lucid/types/database'
 
 export default class TransactionSeeder extends BaseSeeder {
-  private readonly amount = 10_000
+  private readonly amount: number = 10_000
 
-  private readonly minPrice = 100
-  private readonly maxPrice = 1_000
+  private readonly minPrice: number = 100
+  private readonly maxPrice: number = 1_000
 
-  private readonly chunkSize = 1_000
+  private readonly chunkSize: number = 1_000
 
   public async run() {
-    const trx = await db.transaction()
+    const trx: TransactionClientContract = await db.transaction()
 
     try {
       const transactions: Partial<Transaction>[] = []
@@ -25,7 +26,7 @@ export default class TransactionSeeder extends BaseSeeder {
         throw new Error('First account was not found!')
       }
 
-      const multibar = new cliProgress.MultiBar(
+      const multibar: cliProgress.MultiBar = new cliProgress.MultiBar(
         {
           clearOnComplete: false,
           hideCursor: true,
@@ -33,16 +34,16 @@ export default class TransactionSeeder extends BaseSeeder {
         },
         cliProgress.Presets.shades_classic
       )
-      const transactionsBuildingBar = multibar.create(this.amount, 0, {
+      const transactionsBuildingBar: cliProgress.SingleBar = multibar.create(this.amount, 0, {
         label: 'Building transactions',
       })
 
       for (let i = 0; i < this.amount; i++) {
-        const accountId = account.id
-        const type = faker.helpers.arrayElement(Object.values(TransactionType))
-        const price = Number.parseFloat(
+        const accountId: number = account.id
+        const price: number = Number.parseFloat(
           faker.finance.amount({ min: this.minPrice, max: this.maxPrice })
         )
+        const type: TransactionType = faker.helpers.arrayElement(Object.values(TransactionType))
 
         account.balance =
           type === TransactionType.Income ? account.balance + price : account.balance - price
@@ -57,9 +58,11 @@ export default class TransactionSeeder extends BaseSeeder {
         transactionsBuildingBar.increment()
       }
 
-      const creatingTransactionsBar = multibar.create(this.amount / this.chunkSize, 0, {
-        label: 'Creating transactions',
-      })
+      const creatingTransactionsBar: cliProgress.SingleBar = multibar.create(
+        this.amount / this.chunkSize,
+        0,
+        { label: 'Creating transactions' }
+      )
 
       for (let i = 0; i < transactions.length; i += this.chunkSize) {
         await Transaction.createMany(transactions.slice(i, i + this.chunkSize), { client: trx })

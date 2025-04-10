@@ -5,20 +5,20 @@ import db from '@adonisjs/lucid/services/db'
 import Account from '#models/account'
 
 export default class extends BaseSeeder {
-  private readonly amount = 100
+  private readonly amount: number = 100
 
-  private readonly minNameLength = 0
-  private readonly maxNameLength = 20
+  private readonly minNameLength: number = 0
+  private readonly maxNameLength: number = 20
 
-  private readonly minBalance = 10_000_000
-  private readonly maxBalance = 20_000_000
+  private readonly minBalance: number = 10_000_000
+  private readonly maxBalance: number = 20_000_000
 
   async run() {
     const trx = await db.transaction()
 
     try {
-      const accounts = []
-      const accountsBuildingBar = new cliProgress.SingleBar(
+      const accounts: Partial<Account>[] = []
+      const accountsBuildingBar: cliProgress.SingleBar = new cliProgress.SingleBar(
         {
           clearOnComplete: false,
           hideCursor: true,

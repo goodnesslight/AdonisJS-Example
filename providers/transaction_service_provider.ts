@@ -11,7 +11,7 @@ export default class TransactionServiceProvider {
   }
 
   public async ready() {
-    const service = await this.app.container.make('app/services/transaction')
+    const service: TransactionService = await this.app.container.make('app/services/transaction')
     service.simulate()
   }
 }
